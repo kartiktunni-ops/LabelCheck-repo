@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<title>Mirai System Pipeline</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap');
+
+  :root{
+    --paper:#F6F3EC;
+    --panel:#FCFAF5;
+    --panel-strong:#F0ECE1;
+    --ink:#1B2430;
+    --ink-soft:#5B5648;
+    --line:#D9D2C2;
+    --line-strong:#B9AF98;
+    --arrow:#6B6250;
+    --indigo:#33417A;
+    --teal:#1F7A6C;
+    --amber:#B4791C;
+    --green:#2E7D4F;
+    --rose:#B24444;
+    --green-fill:#DDF0E3;
+    --rose-fill:#F6DEDE;
+    --amber-fill:#F6EBD6;
+    --indigo-fill:#E4E7F5;
+    --teal-fill:#DEF0EC;
+    --seq-1:#33417A;
+    --seq-2:#304B78;
+    --seq-3:#2C5475;
+    --seq-4:#295E73;
+    --seq-5:#266771;
+    --seq-7:#1F7A6C;
+    --seq-1-fill:#E4E7F5;
+    --seq-2-fill:#E1E7F2;
+    --seq-3-fill:#DEE9F0;
+    --seq-4-fill:#DCEBEE;
+    --seq-5-fill:#D9EDEB;
+    --seq-7-fill:#DEF0EC;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --paper:#14171C;
+      --panel:#1B1F27;
+      --panel-strong:#232833;
+      --ink:#EDE8DD;
+      --ink-soft:#A79E8C;
+      --line:#333947;
+      --line-strong:#454C5C;
+      --arrow:#A39A86;
+      --indigo:#8994D9;
+      --teal:#57C7B4;
+      --amber:#E0A544;
+      --green:#5BBE87;
+      --rose:#DD8686;
+      --green-fill:#16301F;
+      --rose-fill:#3A1E1E;
+      --amber-fill:#3A2E14;
+      --indigo-fill:#242A44;
+      --teal-fill:#17332D;
+      --seq-1:#8994D9;
+      --seq-2:#7C9AD2;
+      --seq-3:#70A1CB;
+      --seq-4:#65AAC5;
+      --seq-5:#5CB8C1;
+      --seq-7:#57C7B4;
+      --seq-1-fill:#242A44;
+      --seq-2-fill:#212D42;
+      --seq-3-fill:#1E3040;
+      --seq-4-fill:#1B333E;
+      --seq-5-fill:#18363C;
+      --seq-7-fill:#17332D;
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#14171C;
+    --panel:#1B1F27;
+    --panel-strong:#232833;
+    --ink:#EDE8DD;
+    --ink-soft:#A79E8C;
+    --line:#333947;
+    --line-strong:#454C5C;
+    --arrow:#A39A86;
+    --indigo:#8994D9;
+    --teal:#57C7B4;
+    --amber:#E0A544;
+    --green:#5BBE87;
+    --rose:#DD8686;
+    --green-fill:#16301F;
+    --rose-fill:#3A1E1E;
+    --amber-fill:#3A2E14;
+    --indigo-fill:#242A44;
+    --teal-fill:#17332D;
+    --seq-1:#8994D9;
+    --seq-2:#7C9AD2;
+    --seq-3:#70A1CB;
+    --seq-4:#65AAC5;
+    --seq-5:#5CB8C1;
+    --seq-7:#57C7B4;
+    --seq-1-fill:#242A44;
+    --seq-2-fill:#212D42;
+    --seq-3-fill:#1E3040;
+    --seq-4-fill:#1B333E;
+    --seq-5-fill:#18363C;
+    --seq-7-fill:#17332D;
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'IBM Plex Sans', -apple-system, sans-serif;
+    padding:48px 24px 64px;
+  }
+  .wrap{max-width:1520px;margin:0 auto;}
+  .eyebrow{
+    font-family:'IBM Plex Mono', ui-monospace, monospace;
+    font-size:11.5px;
+    letter-spacing:.09em;
+    text-transform:uppercase;
+    color:var(--amber);
+    font-weight:500;
+  }
+  h1{
+    font-family:'Fraunces', Georgia, serif;
+    font-weight:600;
+    font-size:clamp(32px,4vw,44px);
+    margin:10px 0 14px;
+    text-wrap:balance;
+    letter-spacing:-0.01em;
+  }
+  .lede{
+    max-width:74ch;
+    font-size:16px;
+    line-height:1.6;
+    color:var(--ink-soft);
+    margin:0 0 34px;
+  }
+  .lede b{color:var(--ink);font-weight:600;}
+
+  figure{margin:0;}
+  .panel{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:18px;
+    padding:22px 22px 8px;
+    box-shadow:0 1px 2px rgba(20,16,8,.04), 0 12px 32px -18px rgba(20,16,8,.18);
+  }
+  svg{display:block;width:100%;height:auto;color:var(--ink);}
+  .diagram-title{
+    font-family:'IBM Plex Mono', ui-monospace, monospace;
+    font-size:11px;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+    margin:0 0 6px 4px;
+  }
+  figcaption{
+    max-width:82ch;
+    font-size:13.5px;
+    line-height:1.6;
+    color:var(--ink-soft);
+    margin:18px 4px 0;
+  }
+  .tip{
+    margin:28px 4px 0;
+    font-size:12.5px;
+    color:var(--ink-soft);
+    border-top:1px solid var(--line);
+    padding-top:14px;
+  }
+  .tip b{color:var(--ink);font-weight:600;}
+</style>
+
+<div class="wrap">
+  <div class="eyebrow">SIH 2026 &middot; Problem Statement 26034 &middot; Legal Metrology (Packaged Commodities) Rules, 2011</div>
+  <h1>Proposed Solution</h1>
+  <p class="lede">
+    <b>Mirai</b> turns a single label photograph into a rule-cited compliance verdict. The pipeline below extracts
+    every mandatory declaration, measures font legibility against package size, checks each field clause-by-clause
+    against the 2011 Rules, and routes the result to a report, a searchable repository, and the enforcement
+    dashboard &mdash; while a feedback loop keeps the rule engine current as the Rules are amended.
+  </p>
+
+  <figure>
+    <p class="diagram-title">Fig. 1 &mdash; End-to-end system pipeline</p>
+    <div class="panel">
+      <svg viewBox="0 0 1680 800" role="img" aria-label="Flowchart of the Mirai compliance pipeline: input capture, preprocessing, AI extraction, field structuring, and readability analysis feed the LMPC rule engine, which is supplied by a rule database; compliance scoring leads to a decision point that branches into a compliant or non-compliant path, both converging into a shared compliance report, repository and enforcement dashboard, with a feedback loop returning rule amendments to the database.">
+        <defs>
+          <marker id="arrow" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="var(--arrow)"/>
+          </marker>
+          <marker id="arrowAmber" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="var(--amber)"/>
+          </marker>
+        </defs>
+
+        <!-- ===== connectors (drawn first, sit behind cards) ===== -->
+        <g fill="none" stroke="var(--arrow)" stroke-width="2">
+          <line x1="230" y1="150" x2="275" y2="150" marker-end="url(#arrow)"/>
+          <line x1="465" y1="150" x2="510" y2="150" marker-end="url(#arrow)"/>
+          <line x1="700" y1="150" x2="745" y2="150" marker-end="url(#arrow)"/>
+          <line x1="935" y1="150" x2="980" y2="150" marker-end="url(#arrow)"/>
+          <line x1="1170" y1="150" x2="1215" y2="150" marker-end="url(#arrow)"/>
+          <line x1="1405" y1="150" x2="1450" y2="150" marker-end="url(#arrow)"/>
+
+          <polyline points="1545,210 1545,235 840,235 840,260" marker-end="url(#arrow)"/>
+          <polyline points="710,320 580,320 580,430" marker-end="url(#arrow)"/>
+          <polyline points="970,320 1100,320 1100,430" marker-end="url(#arrow)"/>
+          <line x1="580" y1="530" x2="580" y2="580" marker-end="url(#arrow)"/>
+          <line x1="1100" y1="530" x2="1100" y2="580" marker-end="url(#arrow)"/>
+          <polyline points="170,580 170,40 1310,40 1310,90" marker-end="url(#arrow)"/>
+        </g>
+        <g fill="none" stroke="var(--amber)" stroke-width="2" stroke-dasharray="6,4">
+          <line x1="340" y1="645" x2="300" y2="645" marker-end="url(#arrowAmber)"/>
+        </g>
+
+        <!-- connector labels -->
+        <g font-family="IBM Plex Sans" font-size="10.5" fill="var(--ink-soft)" text-anchor="middle">
+          <text x="252" y="140">raw image</text>
+          <text x="487" y="140">clean image</text>
+          <text x="722" y="140">text + coords</text>
+          <text x="957" y="140">field JSON</text>
+          <text x="1192" y="140">measured + structured</text>
+          <text x="1427" y="140">clause match result</text>
+          <text x="1192" y="228">verdict + confidence %</text>
+          <text x="645" y="312" font-weight="600" fill="var(--green)">YES</text>
+          <text x="1035" y="312" font-weight="600" fill="var(--rose)">NO</text>
+        </g>
+        <g font-family="IBM Plex Mono" font-size="10" fill="var(--amber)" text-anchor="middle" letter-spacing="0.02em">
+          <text x="740" y="32">RULES 6 &middot; 8 &middot; 18 &middot; 27 CLAUSE SET</text>
+          <text x="320" y="552">CLAUSE AMENDMENTS &middot; ANALYST FEEDBACK</text>
+        </g>
+
+        <!-- ===== Stage 1 : Input Capture ===== -->
+        <g>
+          <rect x="40" y="90" width="190" height="120" rx="10" fill="var(--panel)" stroke="var(--line-strong)" stroke-width="1.4"/>
+          <circle cx="135" cy="124" r="20" fill="var(--seq-1-fill)"/>
+          <g transform="translate(121,110)" stroke="var(--seq-1)" stroke-width="2.1" fill="none" stroke-linejoin="round" stroke-linecap="round">
+            <rect x="2" y="6" width="24" height="16" rx="2.5"/>
+            <circle cx="14" cy="14" r="5"/>
+            <rect x="9" y="2" width="10" height="5" rx="1"/>
+          </g>
+          <text x="135" y="162" text-anchor="middle" font-weight="700" font-size="13" letter-spacing="0.02em" fill="var(--ink)">INPUT CAPTURE</text>
+          <text x="135" y="180" text-anchor="middle" font-size="11" fill="var(--ink-soft)">Camera or bulk upload</text>
+          <text x="135" y="195" text-anchor="middle" font-size="11" fill="var(--ink-soft)">Front &amp; back panels</text>
+          <text x="135" y="112" text-anchor="middle" font-family="IBM Plex Mono" font-size="9.5" letter-spacing="0.08em" fill="var(--seq-1)">STAGE 01</text>
+        </g>
+
+        <!-- ===== Stage 2 : Preprocessing ===== -->
+        <g>
+          <rect x="275" y="90" width="190" height="120" rx="10" fill="var(--panel)" stroke="var(--line-strong)" stroke-width="1.4"/>
+          <circle cx="370" cy="124" r="20" fill="var(--seq-2-fill)"/>
+          <g transform="translate(356,110)" stroke="var(--seq-2)" stroke-width="2.1" fill="none" stroke-linecap="round">
+            <line x1="2" y1="6" x2="26" y2="6"/><circle cx="11" cy="6" r="2.6" fill="var(--seq-2)"/>
+            <line x1="2" y1="14" x2="26" y2="14"/><circle cx="19" cy="14" r="2.6" fill="var(--seq-2)"/>
+            <line x1="2" y1="22" x2="26" y2="22"/><circle cx="15" cy="22" r="2.6" fill="var(--seq-2)"/>
+          </g>
+          <text x="370" y="162" text-anchor="middle" font-weight="700" font-size="13" letter-spacing="0.02em" fill="var(--ink)">PREPROCESSING</text>
+          <text x="370" y="180" text-anchor="middle" font-size="11" fill="var(--ink-soft)">Deskew, denoise (OpenCV)</text>
+          <text x="370" y="195" text-anchor="middle" font-size="11" fill="var(--ink-soft)">Glare &amp; blur check</text>
+          <text x="370" y="112" text-anchor="middle" font-family="IBM Plex Mono" font-size="9.5" letter-spacing="0.08em" fill="var(--seq-2)">STAGE 02</text>
+        </g>
+
+        <!-- ===== Stage 3 : AI Extraction ===== -->
+        <g>
+          <rect x="510" y="90" width="190" height="120" rx="10" fill="var(--panel)" stroke="var(--line-strong)" stroke-width="1.4"/>
+          <circle cx="605" cy="124" r="20" fill="var(--seq-3-fill)"/>
+          <g transform="translate(591,110)" stroke="var(--seq-3)" stroke-width="2.1" fill="none" stroke-linecap="round">
+            <circle cx="12" cy="12" r="8"/>
+            <line x1="18" y1="18" x2="26" y2="26"/>
+            <line x1="7" y1="10" x2="17" y2="10"/>
+            <line x1="7" y1="14" x2="14" y2="14"/>
+          </g>
+          <text x="605" y="162" text-anchor="middle" font-weight="700" font-size="13" letter-spacing="0.02em" fill="var(--ink)">AI EXTRACTION</text>
+          <text x="605" y="180" text-anchor="middle" font-size="11" fill="var(--ink-soft)">OCR + NLP classifier</text>
+          <text x="605" y="195" text-anchor="middle" font-size="11" fill="var(--ink-soft)">EasyOCR / Tesseract</text>
+          <text x="605" y="112" text-anchor="middle" font-family="IBM Plex Mono" font-size="9.5" letter-spacing="0.08em" fill="var(--seq-3)">STAGE 03</text>
+        </g>
+
+        <!-- ===== Stage 4 : Field Structuring ===== -->
+        <g>
+          <rect x="745" y="90" width="190" height="120" rx="10" fill="var(--panel)" stroke="var(--line-strong)" stroke-width="1.4"/>
+          <circle cx="840" cy="124" r="20" fill="var(--seq-4-fill)"/>
+          <g transform="translate(826,110)" stroke="var(--seq-4)" stroke-width="2.1" fill="none">
+            <rect x="2" y="2" width="24" height="24" rx="2"/>
+            <line x1="14" y1="2" x2="14" y2="26"/>
+            <line x1="2" y1="14" x2="26" y2="14"/>
+          </g>
+          <text x="840" y="162" text-anchor="middle" font-weight="700" font-size="13" letter-spacing="0.02em" fill="var(--ink)">FIELD STRUCTURING</text>
+          <text x="840" y="180" text-anchor="middle" font-size="11" fill="var(--ink-soft)">Structured field JSON</text>
+          <text x="840" y="195" text-anchor="middle" font-size="11" fill="var(--ink-soft)">MRP &middot; Qty &middot; Dates &middot; Batch</text>
+          <text x="840" y="112" text-anchor="middle" font-family="IBM Plex Mono" font-size="9.5" letter-spacing="0.08em" fill="var(--seq-4)">STAGE 04</text>
+        </g>
+
+        <!-- ===== Stage 5 : Readability Engine ===== -->
+        <g>
+          <rect x="980" y="90" width="190" height="120" rx="10" fill="var(--panel)" stroke="var(--line-strong)" stroke-width="1.4"/>
+          <circle cx="1075" cy="124" r="20" fill="var(--seq-5-fill)"/>
+          <g transform="translate(1061,110)" stroke="var(--seq-5)" stroke-width="2.1" fill="none" stroke-linecap="round">
+            <rect x="2" y="11" width="24" height="8" rx="1.5"/>
+            <line x1="8" y1="11" x2="8" y2="15"/>
+            <line x1="14" y1="11" x2="14" y2="15"/>
+            <line x1="20" y1="11" x2="20" y2="15"/>
+          </g>
+          <text x="1075" y="162" text-anchor="middle" font-weight="700" font-size="13" letter-spacing="0.02em" fill="var(--ink)">READABILITY ENGINE</text>
+          <text x="1075" y="180" text-anchor="middle" font-size="11" fill="var(--ink-soft)">Font height &divide; pack size</text>
+          <text x="1075" y="195" text-anchor="middle" font-size="11" fill="var(--ink-soft)">Contrast &amp; placement</text>
+          <text x="1075" y="112" text-anchor="middle" font-family="IBM Plex Mono" font-size="9.5" letter-spacing="0.08em" fill="var(--seq-5)">STAGE 05</text>
+        </g>
+
+        <!-- ===== Stage 6 : LMPC Rule Engine (amber = regulatory thread) ===== -->
+        <g>
+          <rect x="1215" y="90" width="190" height="120" rx="10" fill="var(--panel)" stroke="var(--amber)" stroke-width="1.8"/>
+          <circle cx="1310" cy="124" r="20" fill="var(--amber-fill)"/>
+          <g transform="translate(1296,109)" stroke="var(--amber)" stroke-width="2.1" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="14" y1="2" x2="14" y2="24"/>
+            <line x1="3" y1="7" x2="25" y2="7"/>
+            <line x1="6" y1="7" x2="6" y2="12"/>
+            <line x1="22" y1="7" x2="22" y2="12"/>
+            <circle cx="6" cy="15" r="4"/>
+            <circle cx="22" cy="15" r="4"/>
+            <line x1="9" y1="26" x2="19" y2="26"/>
+          </g>
+          <text x="1310" y="162" text-anchor="middle" font-weight="700" font-size="13" letter-spacing="0.02em" fill="var(--ink)">LMPC RULE ENGINE</text>
+          <text x="1310" y="180" text-anchor="middle" font-size="11" fill="var(--ink-soft)">Dynamic clause database</text>
+          <text x="1310" y="195" text-anchor="middle" font-size="11" fill="var(--ink-soft)">Rules 6 &middot; 8 &middot; 18 &middot; 27</text>
+          <text x="1310" y="112" text-anchor="middle" font-family="IBM Plex Mono" font-size="9.5" letter-spacing="0.08em" fill="var(--amber)">STAGE 06</text>
+        </g>
+
+        <!-- ===== Stage 7 : Compliance Scoring ===== -->
+        <g>
+          <rect x="1450" y="90" width="190" height="120" rx="10" fill="var(--panel)" stroke="var(--line-strong)" stroke-width="1.4"/>
+          <circle cx="1545" cy="124" r="20" fill="var(--seq-7-fill)"/>
+          <g transform="translate(1531,111)" stroke="var(--seq-7)" stroke-width="2.1" fill="none" stroke-linecap="round">
+            <path d="M4,22 A10,10 0 0 1 24,22" />
+            <line x1="14" y1="20" x2="19" y2="10"/>
+            <circle cx="14" cy="20" r="1.8" fill="var(--seq-7)"/>
+          </g>
+          <text x="1545" y="162" text-anchor="middle" font-weight="700" font-size="13" letter-spacing="0.02em" fill="var(--ink)">COMPLIANCE SCORING</text>
+          <text x="1545" y="180" text-anchor="middle" font-size="11" fill="var(--ink-soft)">Confidence % per field</text>
+          <text x="1545" y="195" text-anchor="middle" font-size="11" fill="var(--ink-soft)">Severity classification</text>
+          <text x="1545" y="112" text-anchor="middle" font-family="IBM Plex Mono" font-size="9.5" letter-spacing="0.08em" fill="var(--seq-7)">STAGE 07</text>
+        </g>
+
+        <!-- ===== Decision diamond ===== -->
+        <g>
+          <polygon points="840,260 970,320 840,380 710,320" fill="var(--amber-fill)" stroke="var(--amber)" stroke-width="2"/>
+          <text x="840" y="314" text-anchor="middle" font-weight="700" font-size="12" letter-spacing="0.02em" fill="var(--ink)">ALL MANDATORY</text>
+          <text x="840" y="330" text-anchor="middle" font-weight="700" font-size="12" letter-spacing="0.02em" fill="var(--ink)">CLAUSES MET?</text>
+        </g>
+
+        <!-- ===== Outcome: Compliant ===== -->
+        <g>
+          <rect x="460" y="430" width="240" height="100" rx="10" fill="var(--green-fill)" stroke="var(--green)" stroke-width="1.6"/>
+          <circle cx="497" cy="463" r="17" fill="none" stroke="var(--green)" stroke-width="2"/>
+          <polyline points="489,464 495,470 507,455" fill="none" stroke="var(--green)" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/>
+          <text x="535" y="459" text-anchor="start" font-weight="700" font-size="13" letter-spacing="0.02em" fill="var(--green)">COMPLIANT</text>
+          <text x="535" y="475" text-anchor="start" font-size="10.5" fill="var(--ink-soft)">Certification tag issued</text>
+          <text x="535" y="489" text-anchor="start" font-size="10.5" fill="var(--ink-soft)">Logged to repository</text>
+        </g>
+
+        <!-- ===== Outcome: Non-Compliant ===== -->
+        <g>
+          <rect x="980" y="430" width="240" height="100" rx="10" fill="var(--rose-fill)" stroke="var(--rose)" stroke-width="1.6"/>
+          <circle cx="1017" cy="463" r="17" fill="none" stroke="var(--rose)" stroke-width="2"/>
+          <line x1="1010" y1="456" x2="1024" y2="470" stroke="var(--rose)" stroke-width="2.3" stroke-linecap="round"/>
+          <line x1="1024" y1="456" x2="1010" y2="470" stroke="var(--rose)" stroke-width="2.3" stroke-linecap="round"/>
+          <text x="1055" y="459" text-anchor="start" font-weight="700" font-size="13" letter-spacing="0.02em" fill="var(--rose)">NON-COMPLIANT</text>
+          <text x="1055" y="475" text-anchor="start" font-size="10.5" fill="var(--ink-soft)">Rule-cited violations</text>
+          <text x="1055" y="489" text-anchor="start" font-size="10.5" fill="var(--ink-soft)">Severity + evidence tag</text>
+        </g>
+
+        <!-- ===== Rule Database ===== -->
+        <g>
+          <rect x="40" y="580" width="260" height="130" rx="10" fill="var(--panel-strong)" stroke="var(--amber)" stroke-width="1.6" stroke-dasharray="0"/>
+          <g transform="translate(56,596)" stroke="var(--amber)" stroke-width="2.1" fill="none">
+            <ellipse cx="14" cy="9" rx="12" ry="5"/>
+            <path d="M2,9 L2,27 A12,5 0 0 0 26,27 L26,9"/>
+            <path d="M2,18 A12,5 0 0 0 26,18" opacity="0.6"/>
+          </g>
+          <text x="170" y="646" text-anchor="middle" font-weight="700" font-size="13" letter-spacing="0.02em" fill="var(--ink)">RULE DATABASE</text>
+          <text x="170" y="664" text-anchor="middle" font-size="11" fill="var(--ink-soft)">Legal Metrology clauses</text>
+          <text x="170" y="679" text-anchor="middle" font-size="11" fill="var(--ink-soft)">Config-driven, not code</text>
+          <text x="170" y="700" text-anchor="middle" font-family="IBM Plex Mono" font-size="9.5" letter-spacing="0.06em" fill="var(--amber)">SUPPORTING STORE</text>
+        </g>
+
+        <!-- ===== Final: Report + Repository + Dashboard ===== -->
+        <g>
+          <rect x="340" y="580" width="1000" height="130" rx="10" fill="var(--panel-strong)" stroke="var(--indigo)" stroke-width="1.8"/>
+          <text x="360" y="600" font-family="IBM Plex Mono" font-size="10" letter-spacing="0.08em" fill="var(--ink-soft)">STAGE 08 &middot; OUTPUT &amp; GOVERNANCE</text>
+          <line x1="673" y1="612" x2="673" y2="696" stroke="var(--line-strong)" stroke-width="1"/>
+          <line x1="1006" y1="612" x2="1006" y2="696" stroke="var(--line-strong)" stroke-width="1"/>
+
+          <!-- col A: PDF export -->
+          <g transform="translate(378,618)" stroke="var(--indigo)" stroke-width="2" fill="none">
+            <rect x="4" y="0" width="20" height="26" rx="2"/>
+            <line x1="8" y1="7" x2="20" y2="7"/>
+            <line x1="8" y1="12" x2="20" y2="12"/>
+            <line x1="8" y1="17" x2="16" y2="17"/>
+          </g>
+          <text x="418" y="633" font-weight="700" font-size="12.5" fill="var(--indigo)">PDF EXPORT</text>
+          <text x="418" y="649" font-size="10.5" fill="var(--ink-soft)">Editable + signed report</text>
+
+          <!-- col B: repository -->
+          <g transform="translate(711,618)" stroke="var(--teal)" stroke-width="2" fill="none">
+            <path d="M2,6 L11,6 L13,3 L24,3 L24,26 L2,26 Z"/>
+          </g>
+          <text x="751" y="633" font-weight="700" font-size="12.5" fill="var(--teal)">REPOSITORY</text>
+          <text x="751" y="649" font-size="10.5" fill="var(--ink-soft)">History + evidence photos</text>
+
+          <!-- col C: dashboard -->
+          <g transform="translate(1044,618)" stroke="var(--amber)" stroke-width="2" fill="none">
+            <rect x="2" y="16" width="6" height="10"/>
+            <rect x="11" y="9" width="6" height="17"/>
+            <rect x="20" y="2" width="6" height="24"/>
+          </g>
+          <text x="1084" y="633" font-weight="700" font-size="12.5" fill="var(--amber)">DASHBOARD</text>
+          <text x="1084" y="649" font-size="10.5" fill="var(--ink-soft)">Role-based enforcement view</text>
+
+          <text x="360" y="695" font-size="10.5" fill="var(--ink-soft)">Search &amp; retrieval across every product previously scanned, by SKU, category, date or officer.</text>
+        </g>
+
+        <!-- ===== Legend ===== -->
+        <g font-family="IBM Plex Sans" font-size="11" fill="var(--ink-soft)">
+          <line x1="60" y1="759" x2="98" y2="759" stroke="var(--arrow)" stroke-width="2"/>
+          <text x="106" y="763">Primary data flow</text>
+
+          <line x1="330" y1="759" x2="368" y2="759" stroke="var(--amber)" stroke-width="2" stroke-dasharray="6,4"/>
+          <text x="376" y="763">Feedback / rule update</text>
+
+          <circle cx="628" cy="759" r="5.5" fill="var(--amber)"/>
+          <text x="640" y="763">Decision point</text>
+
+          <circle cx="828" cy="759" r="5.5" fill="var(--green)"/>
+          <text x="840" y="763">Compliant path</text>
+
+          <circle cx="1028" cy="759" r="5.5" fill="var(--rose)"/>
+          <text x="1040" y="763">Non-compliant path</text>
+        </g>
+      </svg>
+    </div>
+    <figcaption>
+      A label image enters through Stages 01&ndash;05, where computer vision and OCR extract and structure every
+      mandatory declaration and measure its legibility. Stage 06 checks each field against the Legal Metrology
+      (Packaged Commodities) Rules, 2011, drawing on a versioned <b style="color:var(--ink)">Rule Database</b> so
+      that regulatory amendments are configuration changes, not code changes. Stage 07 scores confidence per field,
+      and the decision point routes the product down a compliant or non-compliant path &mdash; both converging on
+      a shared compliance report, product repository, and enforcement dashboard, which in turn feeds analyst
+      corrections back into the Rule Database.
+    </figcaption>
+  </figure>
+
+  <p class="tip"><b>For the deck:</b> screenshot the panel above at full browser width and drop it straight into the SIH &ldquo;Proposed Solution&rdquo; slide &mdash; it's sized to sit cleanly on a 16:9 layout.</p>
+</div>
